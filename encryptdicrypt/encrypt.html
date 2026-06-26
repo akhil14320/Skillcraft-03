@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caesar Cipher Cryptor</title>
+    <style>
+        /* Android Material Design Design Tokens */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: #0b0f19;
+            color: #f1f5f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+
+        .app-card {
+            background: #1e293b;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid #334155;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: #38bdf8;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* Interactive Cipher Wheel UI component */
+        .wheel-container {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0 25px 0;
+            position: relative;
+        }
+
+        .cipher-wheel {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 4px solid #38bdf8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: #0f172a;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+
+        .inner-wheel {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px dashed #f59e0b;
+            background: #1e293b;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .wheel-center {
+            width: 24px;
+            height: 24px;
+            background: #f59e0b;
+            border-radius: 50%;
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+        }
+
+        .shift-badge {
+            position: absolute;
+            bottom: -10px;
+            background: #f59e0b;
+            color: #0f172a;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        /* Form Layout components */
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        textarea, input[type="number"] {
+            width: 100%;
+            background: #0f172a;
+            border: 2px solid #475569;
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            padding: 12px 16px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        textarea {
+            height: 85px;
+            resize: none;
+        }
+
+        textarea:focus, input[type="number"]:focus {
+            border-color: #38bdf8;
+        }
+
+        .inline-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 12px;
+        }
+
+        /* Mode Toggle Segmented Control Buttons */
+        .toggle-container {
+            display: flex;
+            background: #0f172a;
+            padding: 4px;
+            border-radius: 14px;
+            border: 1px solid #334155;
+            height: 48px;
+            align-items: center;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            height: 100%;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-btn.active {
+            background: #38bdf8;
+            color: #0f172a;
+        }
+
+        .output-box {
+            background: rgba(56, 189, 248, 0.06);
+            border: 2px dashed #38bdf8;
+            border-radius: 14px;
+            padding: 14px;
+            min-height: 85px;
+            word-break: break-all;
+            font-size: 1rem;
+            color: #38bdf8;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-card">
+        <div class="header">
+            <h1>Caesar Cipher Tool</h1>
+        </div>
+
+        <div class="wheel-container">
+            <div class="cipher-wheel">
+                <div class="inner-wheel" id="visualWheel">
+                    <div class="wheel-center"></div>
+                </div>
+                <div class="shift-badge" id="shiftBadge">Shift: 3</div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="messageInput">Source Message</label>
+            <textarea id="messageInput" placeholder="Type secret transmission here..."></textarea>
+        </div>
+
+        <div class="input-group inline-row">
+            <div>
+                <label>Operation Mode</label>
+                <div class="toggle-container">
+                    <button class="toggle-btn active" id="modeEncrypt">Encrypt</button>
+                    <button class="toggle-btn" id="modeDecrypt">Decrypt</button>
+                </div>
+            </div>
+            <div>
+                <label for="shiftInput">Key Shift</label>
+                <input type="number" id="shiftInput" value="3" min="0" max="25">
+            </div>
+        </div>
+
+        <div class="input-group" style="margin-bottom: 0;">
+            <label>Processed Output</label>
+            <div class="output-box" id="outputDisplay">Your translation will appear stream-live here...</div>
+        </div>
+    </div>
+
+    <script>
+        const messageInput = document.getElementById('messageInput');
+        const shiftInput = document.getElementById('shiftInput');
+        const outputDisplay = document.getElementById('outputDisplay');
+        const modeEncrypt = document.getElementById('modeEncrypt');
+        const modeDecrypt = document.getElementById('modeDecrypt');
+        const visualWheel = document.getElementById('visualWheel');
+        const shiftBadge = document.getElementById('shiftBadge');
+
+        let isEncryptMode = true;
+
+        // Core Caesar Cipher Logic
+        function processText() {
+            const text = messageInput.value;
+            let shift = parseInt(shiftInput.value) || 0;
+            
+            // Normalize shifts greater than 25 or less than 0
+            shift = ((shift % 26) + 26) % 26; 
+            
+            // Reverse shift direction if decoding
+            if (!isEncryptMode) {
+                shift = 26 - shift;
+            }
+
+            // Animate mechanical wheel UI rotation asset
+            const rotationDegrees = (parseInt(shiftInput.value) || 0) * (360 / 26);
+            visualWheel.style.transform = `rotate(${isEncryptMode ? -rotationDegrees : rotationDegrees}deg)`;
+            shiftBadge.innerText = `Shift: ${parseInt(shiftInput.value) || 0}`;
+
+            if (text === '') {
+                outputDisplay.innerText = "Your translation will appear stream-live here...";
+                outputDisplay.style.color = "rgba(56, 189, 248, 0.5)";
+                return;
+            }
+
+            outputDisplay.style.color = "#38bdf8";
+            
+            const result = text.split('').map(char => {
+                const code = char.charCodeAt(0);
+                
+                // Upper-case bounds
+                if (code >= 65 && code <= 90) {
+                    return String.fromCharCode(((code - 65 + shift) % 26) + 65);
+                }
+                // Lower-case bounds
+                else if (code >= 97 && code <= 122) {
+                    return String.fromCharCode(((code - 97 + shift) % 26) + 97);
+                }
+                // Preserve punctuation/spaces unmodified
+                return char;
+            }).join('');
+
+            outputDisplay.innerText = result;
+        }
+
+        // Segmented control toggle logic
+        modeEncrypt.addEventListener('click', () => {
+            isEncryptMode = true;
+            modeEncrypt.classList.add('active');
+            modeDecrypt.classList.remove('active');
+            processText();
+        });
+
+        modeDecrypt.addEventListener('click', () => {
+            isEncryptMode = false;
+            modeDecrypt.classList.add('active');
+            modeEncrypt.classList.remove('active');
+            processText();
+        });
+
+        // Event streams for real-time calculation updating
+        messageInput.addEventListener('input', processText);
+        shiftInput.addEventListener('input', processText);
+    </script>
+</body>
+</html>
